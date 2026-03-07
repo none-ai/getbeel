@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - GetBeel</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        header { background: #fff; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        header h1 { color: #da552f; font-size: 1.5rem; display: inline-block; }
+        nav { float: right; }
+        nav a { margin-left: 1.5rem; text-decoration: none; color: #333; }
+        .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        .product-card { background: #fff; border-radius: 8px; padding: 2rem; }
+        .product-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }
+        .product-title h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+        .product-title .tagline { color: #666; font-size: 1.1rem; }
+        .vote-box { text-align: center; padding: 1rem 1.5rem; border: 2px solid #da552f; border-radius: 8px; }
+        .vote-box .count { font-size: 2rem; font-weight: bold; color: #da552f; }
+        .vote-box button { margin-top: 0.5rem; padding: 0.5rem 1rem; background: #da552f; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        .product-details { margin-top: 1.5rem; }
+        .product-details h3 { margin-bottom: 0.5rem; }
+        .product-details p { color: #666; line-height: 1.6; }
+        .category { display: inline-block; background: #f0f0f0; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem; color: #666; margin-top: 1rem; }
+        .back-link { display: inline-block; margin-bottom: 1rem; color: #da552f; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>GetBeel</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/submit">Submit</a>
+        </nav>
+    </header>
+    <div class="container">
+        <a href="/" class="back-link">&larr; Back to products</a>
+        <div class="product-card">
+            <div class="product-header">
+                <div class="product-title">
+                    <h1>{{ product.name }}</h1>
+                    <p class="tagline">{{ product.tagline }}</p>
+                </div>
+                <div class="vote-box">
+                    <div class="count">{{ product.votes }}</div>
+                    <button onclick="vote()">Upvote</button>
+                </div>
+            </div>
+            <div class="product-details">
+                <h3>Description</h3>
+                <p>{{ product.description }}</p>
+                <span class="category">{{ product.category }}</span>
+            </div>
+        </div>
+    </div>
+    <script>
+        function vote() {
+            fetch('/api/products/{{ product.id }}/vote', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    document.querySelector('.count').textContent = data.votes;
+                });
+        }
+    </script>
+</body>
+</html>
