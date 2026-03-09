@@ -8,55 +8,75 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
         header { background: #fff; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        header h1 { color: #da552f; font-size: 1.5rem; display: inline-block; }
+        header h1 { color: #da552f; font-size: 1.5rem; display: inline-block; text-decoration: none; }
         nav { float: right; }
         nav a { margin-left: 1.5rem; text-decoration: none; color: #333; }
+        nav a:hover { color: #da552f; }
         .container { max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
         .form-card { background: #fff; border-radius: 8px; padding: 2rem; }
         h2 { margin-bottom: 1.5rem; }
         .form-group { margin-bottom: 1.25rem; }
         .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; font-family: inherit; }
         .form-group textarea { height: 100px; resize: vertical; }
+        .form-group .help { font-size: 0.75rem; color: #888; margin-top: 0.25rem; }
         button[type="submit"] { width: 100%; padding: 0.75rem; background: #da552f; color: #fff; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
         button[type="submit"]:hover { background: #c44a26; }
+        .flash { padding: 1rem; margin-bottom: 1rem; border-radius: 4px; }
+        .flash.success { background: #d4edda; color: #155724; }
+        .flash.error { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
     <header>
-        <h1>GetBeel</h1>
+        <a href="/" style="text-decoration: none;"><h1>GetBeel</h1></a>
         <nav>
             <a href="/">Home</a>
+            <a href="/categories">Categories</a>
             <a href="/submit">Submit</a>
         </nav>
     </header>
     <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         <div class="form-card">
             <h2>Submit Your Product</h2>
             <form method="POST" action="/submit">
                 <div class="form-group">
-                    <label for="name">Product Name</label>
+                    <label for="name">Product Name *</label>
                     <input type="text" id="name" name="name" required placeholder="Enter product name">
                 </div>
                 <div class="form-group">
-                    <label for="tagline">Tagline</label>
-                    <input type="text" id="tagline" name="tagline" required placeholder="One-line description">
+                    <label for="tagline">Tagline *</label>
+                    <input type="text" id="tagline" name="tagline" required placeholder="One-line description (max 100 chars)" maxlength="100">
                 </div>
                 <div class="form-group">
-                    <label for="category">Category</label>
+                    <label for="category">Category *</label>
                     <select id="category" name="category" required>
                         <option value="">Select a category</option>
-                        <option value="Productivity">Productivity</option>
-                        <option value="Communication">Communication</option>
-                        <option value="Developer Tools">Developer Tools</option>
-                        <option value="Design Tools">Design Tools</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="Other">Other</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat }}">{{ cat }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="description">Description</label>
+                    <label for="description">Description *</label>
                     <textarea id="description" name="description" required placeholder="Tell us about your product"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="maker">Your Name / Maker</label>
+                    <input type="text" id="maker" name="maker" placeholder="Your name or company name">
+                    <div class="help">This will be displayed on your product page</div>
+                </div>
+                <div class="form-group">
+                    <label for="maker_url">Maker Website / Profile URL</label>
+                    <input type="url" id="maker_url" name="maker_url" placeholder="https://github.com/yourname">
                 </div>
                 <button type="submit">Submit Product</button>
             </form>

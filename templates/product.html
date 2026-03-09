@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="{{ product.name }} - GetBeel">
+    <meta property="og:description" content="{{ product.tagline }}">
     <title>{{ product.name }} - GetBeel</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
         header { background: #fff; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        header h1 { color: #da552f; font-size: 1.5rem; display: inline-block; }
+        header h1 { color: #da552f; font-size: 1.5rem; display: inline-block; text-decoration: none; }
         nav { float: right; }
         nav a { margin-left: 1.5rem; text-decoration: none; color: #333; }
         .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
@@ -19,22 +21,62 @@
         .vote-box { text-align: center; padding: 1rem 1.5rem; border: 2px solid #da552f; border-radius: 8px; }
         .vote-box .count { font-size: 2rem; font-weight: bold; color: #da552f; }
         .vote-box button { margin-top: 0.5rem; padding: 0.5rem 1rem; background: #da552f; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        .vote-box button:hover { background: #c44a26; }
         .product-details { margin-top: 1.5rem; }
         .product-details h3 { margin-bottom: 0.5rem; }
         .product-details p { color: #666; line-height: 1.6; }
-        .category { display: inline-block; background: #f0f0f0; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem; color: #666; margin-top: 1rem; }
+        .category { display: inline-block; background: #f0f0f0; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem; color: #666; margin-top: 1rem; margin-right: 0.5rem; }
+        .maker-info { display: inline-block; margin-top: 1rem; }
+        .maker-info a { color: #da552f; text-decoration: none; }
         .back-link { display: inline-block; margin-bottom: 1rem; color: #da552f; text-decoration: none; }
+
+        /* Social Share */
+        .share-section { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #eee; }
+        .share-section h4 { margin-bottom: 0.5rem; color: #666; }
+        .share-links { display: flex; gap: 0.5rem; }
+        .share-links a { padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px; font-size: 0.875rem; }
+        .share-twitter { background: #1da1f2; color: #fff; }
+        .share-facebook { background: #4267b2; color: #fff; }
+        .share-linkedin { background: #0077b5; color: #fff; }
+        .share-copy { background: #666; color: #fff; cursor: pointer; }
+
+        /* Comments Section */
+        .comments-section { margin-top: 2rem; background: #fff; border-radius: 8px; padding: 2rem; }
+        .comments-section h3 { margin-bottom: 1rem; }
+        .comment-form { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #eee; }
+        .comment-form input, .comment-form textarea { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 0.5rem; font-family: inherit; }
+        .comment-form textarea { height: 80px; resize: vertical; }
+        .comment-form button { padding: 0.5rem 1rem; background: #da552f; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        .comment { padding: 1rem 0; border-bottom: 1px solid #eee; }
+        .comment:last-child { border-bottom: none; }
+        .comment-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        .comment-author { font-weight: bold; color: #333; }
+        .comment-date { font-size: 0.75rem; color: #888; }
+        .comment-content { color: #666; line-height: 1.5; }
+
+        .flash { padding: 1rem; margin-bottom: 1rem; border-radius: 4px; }
+        .flash.success { background: #d4edda; color: #155724; }
+        .flash.error { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
     <header>
-        <h1>GetBeel</h1>
+        <a href="/" style="text-decoration: none;"><h1>GetBeel</h1></a>
         <nav>
             <a href="/">Home</a>
+            <a href="/categories">Categories</a>
             <a href="/submit">Submit</a>
         </nav>
     </header>
     <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         <a href="/" class="back-link">&larr; Back to products</a>
         <div class="product-card">
             <div class="product-header">
@@ -51,7 +93,46 @@
                 <h3>Description</h3>
                 <p>{{ product.description }}</p>
                 <span class="category">{{ product.category }}</span>
+                {% if product.maker %}
+                <span class="maker-info">by <a href="/maker/{{ product.maker }}">{{ product.maker }}</a></span>
+                {% endif %}
             </div>
+
+            <!-- Social Share -->
+            <div class="share-section">
+                <h4>Share this product</h4>
+                <div class="share-links">
+                    <a href="https://twitter.com/intent/tweet?text=Check+out+{{ product.name }}&url={{ request.url }}" target="_blank" class="share-twitter">Twitter</a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank" class="share-facebook">Facebook</a>
+                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.url }}&title={{ product.name }}&summary={{ product.tagline }}" target="_blank" class="share-linkedin">LinkedIn</a>
+                    <span class="share-copy" onclick="copyLink()">Copy Link</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="comments-section">
+            <h3>Comments ({{ comments|length }})</h3>
+
+            <div class="comment-form">
+                <form method="POST" action="/product/{{ product.id }}/comment">
+                    <input type="text" name="author" placeholder="Your name (optional)">
+                    <textarea name="content" placeholder="Write a comment..." required></textarea>
+                    <button type="submit">Post Comment</button>
+                </form>
+            </div>
+
+            {% for comment in comments %}
+            <div class="comment">
+                <div class="comment-header">
+                    <span class="comment-author">{{ comment.author }}</span>
+                    <span class="comment-date">{{ comment.created_at }}</span>
+                </div>
+                <div class="comment-content">{{ comment.content }}</div>
+            </div>
+            {% else %}
+            <p style="color: #888; text-align: center; padding: 1rem;">No comments yet. Be the first to comment!</p>
+            {% endfor %}
         </div>
     </div>
     <script>
@@ -61,6 +142,12 @@
                 .then(data => {
                     document.querySelector('.count').textContent = data.votes;
                 });
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Link copied to clipboard!');
+            });
         }
     </script>
 </body>

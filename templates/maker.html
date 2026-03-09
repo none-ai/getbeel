@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ maker }}'s Products - GetBeel</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        header { background: #fff; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        header h1 { color: #da552f; font-size: 1.5rem; display: inline-block; text-decoration: none; }
+        nav { float: right; }
+        nav a { margin-left: 1.5rem; text-decoration: none; color: #333; }
+        nav a:hover { color: #da552f; }
+        .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+        .maker-header { background: #fff; border-radius: 8px; padding: 2rem; margin-bottom: 1.5rem; text-align: center; }
+        .maker-header h2 { font-size: 1.75rem; margin-bottom: 0.5rem; color: #333; }
+        .maker-header .stats { color: #666; }
+        .product-list { background: #fff; border-radius: 8px; overflow: hidden; }
+        .product-item { display: flex; padding: 1.5rem; border-bottom: 1px solid #eee; }
+        .product-item:last-child { border-bottom: none; }
+        .votes { text-align: center; padding-right: 1.5rem; min-width: 60px; }
+        .votes .count { font-size: 1.25rem; font-weight: bold; color: #333; }
+        .votes .label { font-size: 0.75rem; color: #666; }
+        .product-info h2 { font-size: 1.1rem; margin-bottom: 0.25rem; }
+        .product-info h2 a { text-decoration: none; color: #333; }
+        .product-info h2 a:hover { color: #da552f; }
+        .product-info .tagline { color: #666; margin-bottom: 0.5rem; }
+        .product-info .category { display: inline-block; background: #f0f0f0; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; color: #666; }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" style="text-decoration: none;"><h1>GetBeel</h1></a>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/categories">Categories</a>
+            <a href="/submit">Submit</a>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="maker-header">
+            <h2>{{ maker }}</h2>
+            <p class="stats">{{ products|length }} product{{ '' if products|length == 1 else 's' }}</p>
+        </div>
+
+        <div class="product-list">
+            {% for product in products %}
+            <div class="product-item">
+                <div class="votes">
+                    <div class="count">{{ product.votes }}</div>
+                    <div class="label">votes</div>
+                </div>
+                <div class="product-info">
+                    <h2><a href="/product/{{ product.id }}">{{ product.name }}</a></h2>
+                    <p class="tagline">{{ product.tagline }}</p>
+                    <span class="category">{{ product.category }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
