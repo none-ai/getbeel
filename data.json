@@ -1,0 +1,70 @@
+{
+    "products": [
+        {
+            "id": 1,
+            "name": "BeelAI",
+            "tagline": "AI-powered productivity assistant for teams",
+            "votes": 142,
+            "category": "Productivity",
+            "description": "BeelAI helps teams collaborate smarter with AI-powered insights and automation.",
+            "maker": "stlin256",
+            "maker_url": "https://github.com/stlin256",
+            "thumbnail_url": "",
+            "created_at": "2024-01-15"
+        },
+        {
+            "id": 2,
+            "name": "BeelChat",
+            "tagline": "Real-time messaging for remote teams",
+            "votes": 98,
+            "category": "Communication",
+            "description": "Seamless communication platform built for distributed teams.",
+            "maker": "alice_dev",
+            "maker_url": "",
+            "thumbnail_url": "",
+            "created_at": "2024-01-18"
+        },
+        {
+            "id": 3,
+            "name": "BeelFlow",
+            "tagline": "Visual workflow automation tool",
+            "votes": 76,
+            "category": "Developer Tools",
+            "description": "Automate your workflows with a drag-and-drop visual editor.",
+            "maker": "bob_coder",
+            "maker_url": "",
+            "thumbnail_url": "",
+            "created_at": "2024-01-20"
+        },
+        {
+            "id": 4,
+            "name": "BeelSpace",
+            "tagline": "All-in-one workspace for creators",
+            "votes": 203,
+            "category": "Productivity",
+            "description": "The ultimate workspace for content creators and makers.",
+            "maker": "creator_co",
+            "maker_url": "",
+            "thumbnail_url": "",
+            "created_at": "2024-01-10"
+        }
+    ],
+    "comments": [
+        {
+            "id": 1,
+            "product_id": 1,
+            "author": "tech_user",
+            "content": "This is amazing! Exactly what our team needed.",
+            "created_at": "2024-01-16"
+        },
+        {
+            "id": 2,
+            "product_id": 1,
+            "author": "early_adopter",
+            "content": "Great tool, but needs more integrations.",
+            "created_at": "2024-01-17"
+        }
+    ],
+    "next_product_id": 5,
+    "next_comment_id": 3
+}
