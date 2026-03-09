@@ -1,12 +1,24 @@
 import json
 import os
 from datetime import datetime
+from urllib.parse import urlparse
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
 
 app = Flask(__name__)
 app.secret_key = 'getbeel-secret-key-change-in-production'
 
 DATA_FILE = os.path.join(os.path.dirname(__file__), 'data.json')
+
+
+def is_valid_url(url):
+    """Validate URL format"""
+    if not url:
+        return True  # Empty URL is optional
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except:
+        return False
 
 
 def load_data():
@@ -97,6 +109,20 @@ def submit():
         description = request.form.get('description')
         maker = request.form.get('maker', 'Anonymous')
         maker_url = request.form.get('maker_url', '')
+
+        # Validate required fields
+        if not name or not name.strip():
+            flash('Product name is required', 'error')
+            return render_template('submit.html', categories=categories)
+
+        if not tagline or not tagline.strip():
+            flash('Tagline is required', 'error')
+            return render_template('submit.html', categories=categories)
+
+        # Validate maker URL
+        if maker_url and not is_valid_url(maker_url):
+            flash('Please enter a valid URL for maker website', 'error')
+            return render_template('submit.html', categories=categories)
 
         new_product = {
             "id": data['next_product_id'],
