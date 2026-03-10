@@ -2,12 +2,45 @@ import json
 import os
 from datetime import datetime
 from urllib.parse import urlparse
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g
+import logging
+import uuid
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.secret_key = 'getbeel-secret-key-change-in-production'
 
 DATA_FILE = os.path.join(os.path.dirname(__file__), 'data.json')
+
+# Request ID middleware
+@app.before_request
+def before_request():
+    g.request_id = str(uuid.uuid8())[:8]
+    logger.info(f"[{g.request_id}] {request.method} {request.path}")
+
+@app.after_request
+def after_request(response):
+    logger.info(f"[{g.request_id}] Status: {response.status_code}")
+    response.headers['X-Request-ID'] = g.request_id
+    return response
+
+# Health check endpoint
+@app.route('/health')
+def health_check():
+    return jsonify({'status': 'healthy', 'request_id': g.request_id}), 200
+
+# Error handlers
+@app.errorhandler(404)
+def not_found(e):
+    return render_template('error.html', error_code=404, error_message='Page not found'), 404
+
+@app.errorhandler(500)
+def server_error(e):
+    logger.error(f"Server error: {e}")
+    return render_template('error.html', error_code=500, error_message='Internal server error'), 500
 
 
 def is_valid_url(url):
